@@ -3,10 +3,20 @@
     currentCID: null,
     token: 0,
     propertyCache: new Map(),
-    viewCache: new Map()
+    viewCache: new Map(),
+    smilesCache: new Map()
   };
 
   function $(id) { return document.getElementById(id); }
+
+  function esc(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 
   function withTimeout(url, ms = 12000) {
     const controller = new AbortController();
@@ -40,7 +50,8 @@
   }
 
   function item(label, value, wide = false) {
-    return `<div class="info-item${wide ? " wide" : ""}"><span>${label}</span><strong>${value || "—"}</strong></div>`;
+    const safeValue = value || "—";
+    return `<div class="info-item${wide ? " wide" : ""}"><span>${esc(label)}</span><strong>${esc(safeValue)}</strong></div>`;
   }
 
   function extractCID() {
@@ -86,7 +97,6 @@
     `;
 
     card.replaceChildren(toggle, body);
-
     toggle.addEventListener("click", () => setExpanded(!card.classList.contains("expanded")));
 
     let startY = null;
@@ -159,6 +169,46 @@
     return value;
   }
 
+  async function fetchSMILES(cid, props = {}) {
+    const cached = state.smilesCache.get(cid);
+    if (cached) return cached;
+
+    const fromProps = normalizeSMILES(props.IsomericSMILES || props.CanonicalSMILES);
+    if (fromProps) {
+      state.smilesCache.set(cid, fromProps);
+      return fromProps;
+    }
+
+    const urls = [
+      `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/IsomericSMILES,CanonicalSMILES/JSON`,
+      `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/CanonicalSMILES/JSON`
+    ];
+
+    for (const url of urls) {
+      try {
+        const response = await withTimeout(url, 10000);
+        if (!response.ok) continue;
+        const data = await response.json();
+        const row = data?.PropertyTable?.Properties?.[0] || {};
+        const smiles = normalizeSMILES(row.IsomericSMILES || row.CanonicalSMILES);
+        if (smiles) {
+          state.smilesCache.set(cid, smiles);
+          return smiles;
+        }
+      } catch (error) {
+        console.warn("SMILES indisponível nesta tentativa", error);
+      }
+    }
+
+    return "";
+  }
+
+  function normalizeSMILES(value) {
+    const text = String(value || "").trim();
+    if (!text || text === "—") return "";
+    return text.replace(/\s+/g, "");
+  }
+
   async function fetchPugView(cid) {
     if (state.viewCache.has(cid)) return state.viewCache.get(cid);
     const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${cid}/JSON`;
@@ -203,6 +253,43 @@
     return "";
   }
 
+  function fahrenheitToC(value) { return (Number(value) - 32) * 5 / 9; }
+  function kelvinToC(value) { return Number(value) - 273.15; }
+
+  function convertRanges(text, regex, converter) {
+    return text.replace(regex, (match, a, b) => {
+      if (b !== undefined) {
+        const c1 = converter(a);
+        const c2 = converter(b);
+        if (Number.isFinite(c1) && Number.isFinite(c2)) return `${fmtNumber(c1, 1)}–${fmtNumber(c2, 1)} °C`;
+      }
+      const c = converter(a);
+      return Number.isFinite(c) ? `${fmtNumber(c, 1)} °C` : match;
+    });
+  }
+
+  function normalizeTemperatureC(text) {
+    const raw = cleanText(text);
+    if (!raw) return "";
+
+    if (/°\s*C|deg\s*C|degrees?\s*C|Celsius|Centigrade/i.test(raw)) {
+      return raw
+        .replace(/degrees?\s*Celsius/ig, "°C")
+        .replace(/degrees?\s*C/ig, "°C")
+        .replace(/deg\s*C/ig, "°C")
+        .replace(/Celsius/ig, "°C")
+        .replace(/Centigrade/ig, "°C");
+    }
+
+    let converted = raw;
+    converted = convertRanges(converted, /(-?\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(-?\d+(?:\.\d+)?)\s*°?\s*F\b/gi, fahrenheitToC);
+    converted = convertRanges(converted, /(-?\d+(?:\.\d+)?)\s*°?\s*F\b/gi, fahrenheitToC);
+    converted = convertRanges(converted, /(-?\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(-?\d+(?:\.\d+)?)\s*K\b/g, kelvinToC);
+    converted = convertRanges(converted, /(-?\d+(?:\.\d+)?)\s*K\b/g, kelvinToC);
+
+    return converted;
+  }
+
   async function renderDetailed(cid) {
     const token = ++state.token;
     const source = $("infoSource");
@@ -210,16 +297,18 @@
 
     try {
       const props = await fetchProperties(cid);
+      const smilesPromise = fetchSMILES(cid, props);
       if (token !== state.token) return;
 
       let view = null;
       try { view = await fetchPugView(cid); } catch (error) { console.warn("PUG-View indisponível", error); }
 
+      const smiles = await smilesPromise;
       if (token !== state.token) return;
 
       const solubility = view ? firstSectionText(view, ["Solubility", "Water Solubility"], 155) : "";
-      const melting = view ? firstSectionText(view, ["Melting Point"], 120) : "";
-      const boiling = view ? firstSectionText(view, ["Boiling Point"], 120) : "";
+      const melting = normalizeTemperatureC(view ? firstSectionText(view, ["Melting Point"], 120) : "");
+      const boiling = normalizeTemperatureC(view ? firstSectionText(view, ["Boiling Point"], 120) : "");
       const density = view ? firstSectionText(view, ["Density"], 120) : "";
       const uses = view ? firstSectionText(view, ["Use and Manufacturing", "Uses", "Drug and Medication Information"], 185) : "";
       const hazards = view ? firstSectionText(view, ["GHS Hazard Statements", "Hazards Identification", "Safety and Hazards"], 185) : "";
@@ -231,6 +320,7 @@
       grid.innerHTML = [
         item("Fórmula", formula),
         item("Massa molar", fmtNumber(props.MolecularWeight, 2, " g/mol")),
+        item("SMILES", truncate(smiles || "não informado", 260), true),
         item("LogP / XLogP", props.XLogP === undefined ? "—" : fmtNumber(props.XLogP, 2)),
         item("TPSA", fmtNumber(props.TPSA, 1, " Å²")),
         item("Doadores H", fmt(props.HBondDonorCount)),
@@ -240,16 +330,15 @@
         item("Complexidade", fmtNumber(props.Complexity, 0)),
         item("Massa exata", fmtNumber(props.ExactMass, 4, " Da")),
         item("Solubilidade", solubility || "não informada", true),
-        item("Ponto de fusão", melting || "não informado"),
-        item("Ponto de ebulição", boiling || "não informado"),
+        item("Ponto de fusão (°C)", melting || "não informado"),
+        item("Ponto de ebulição (°C)", boiling || "não informado"),
         item("Densidade", density || "não informada"),
         item("Uso / contexto", uses || "não informado", true),
         item("Perigos", hazards || "não informado", true),
-        item("Nome IUPAC", truncate(props.IUPACName || "—", 220), true),
-        item("SMILES", truncate(props.IsomericSMILES || props.CanonicalSMILES || "—", 220), true)
+        item("Nome IUPAC", truncate(props.IUPACName || "—", 220), true)
       ].join("");
 
-      if (source) source.textContent = "Fonte: PubChem PUG REST/PUG-View. Campos podem variar por composto.";
+      if (source) source.textContent = "Fonte: PubChem PUG REST/PUG-View. Temperaturas em °C quando disponíveis ou convertíveis.";
     } catch (error) {
       console.warn(error);
       if (source) source.textContent = "Fonte: PubChem. Propriedades detalhadas indisponíveis para este composto.";
