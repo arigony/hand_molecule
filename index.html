@@ -6,7 +6,8 @@
   <title>MolecuAR — Visualizador Molecular Ball-and-Stick</title>
   <meta name="description" content="Visualizador molecular 3D educacional com estruturas do PubChem, ball-and-stick e rastreamento de mão com MediaPipe Tasks Vision." />
 
-  <link rel="stylesheet" href="style.css?v=solubility-celsius-2" />
+  <link rel="stylesheet" href="style.css?v=integration-fix-20260712" />
+  <link rel="stylesheet" href="molecule-info.css?v=integration-fix-20260712" />
 
   <script type="importmap">
   {
@@ -99,7 +100,57 @@
     <div id="toastBox" class="toast-box" aria-live="polite"></div>
   </main>
 
-  <script src="resolver.js?v=solubility-celsius-2"></script>
-  <script type="module" src="script.js?v=solubility-celsius-2"></script>
+  <!-- A câmera precisa ser interceptada antes de script.js solicitar getUserMedia. -->
+  <script src="camera-toggle.js?v=integration-fix-20260712"></script>
+  <script src="resolver.js?v=integration-fix-20260712"></script>
+  <script type="module" src="script.js?v=integration-fix-20260712"></script>
+  <script src="molecule-info.js?v=integration-fix-20260712"></script>
+
+  <!-- O HTML atual já contém o botão do painel; este bloco conecta clique e gesto vertical. -->
+  <script>
+  (() => {
+    function setPanelExpanded(expanded) {
+      const card = document.getElementById("infoCard");
+      const toggle = document.getElementById("infoToggle");
+      if (!card || !toggle) return;
+
+      card.classList.toggle("expanded", expanded);
+      card.classList.toggle("collapsed", !expanded);
+      toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+    }
+
+    function bindPanel() {
+      const card = document.getElementById("infoCard");
+      const toggle = document.getElementById("infoToggle");
+      if (!card || !toggle || toggle.dataset.infoBound === "1") return;
+
+      toggle.dataset.infoBound = "1";
+      toggle.addEventListener("click", () => {
+        setPanelExpanded(!card.classList.contains("expanded"));
+      });
+
+      let startY = null;
+      card.addEventListener("pointerdown", event => {
+        startY = event.clientY;
+      });
+      card.addEventListener("pointerup", event => {
+        if (startY === null) return;
+        const delta = event.clientY - startY;
+        if (delta < -24) setPanelExpanded(true);
+        if (delta > 24) setPanelExpanded(false);
+        startY = null;
+      });
+      card.addEventListener("pointercancel", () => {
+        startY = null;
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", bindPanel, { once: true });
+    } else {
+      bindPanel();
+    }
+  })();
+  </script>
 </body>
 </html>
