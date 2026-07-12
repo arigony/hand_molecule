@@ -1,23 +1,24 @@
 # MolecuAR — Visualizador Molecular Ball-and-Stick
 
-Objeto educacional interativo para visualização molecular 3D no navegador, com estruturas do PubChem, representação ball-and-stick e modo AR com rastreamento de mão.
+Objeto educacional interativo para visualização molecular 3D no navegador.
 
-## Versão publicada
+## Versão final
 
-Esta revisão usa **MediaPipe Tasks Vision / HandLandmarker**, a mesma abordagem técnica da página `mol`, em vez da API antiga `@mediapipe/hands`.
+Esta versão foi organizada para publicação direta no GitHub Pages e padroniza todas as estruturas em **representação ball-and-stick**.
 
 ## Características
 
 - Estruturas carregadas prioritariamente do **PubChem** por CID.
-- Exemplos com CIDs fixos para reduzir ambiguidade de busca.
-- Representação **ball-and-stick** padronizada.
-- Átomos como esferas e ligações como bastões.
-- Cores atômicas padronizadas.
-- Modo AR com câmera frontal.
-- Rastreamento de mão por **HandLandmarker**.
-- No celular, a molécula fica ancorada em área segura; a mão controla rotação e escala.
-- Toque funciona como fallback.
-- Modo diagnóstico com `?debug=1`, mostrando pontos detectados da mão.
+- Exemplos com CIDs fixos para evitar ambiguidade de busca.
+- Representação visual única para todas as moléculas:
+  - átomos como esferas;
+  - ligações como bastões;
+  - ligações simples, duplas e triplas diferenciadas;
+  - cores atômicas padronizadas.
+- Fallback local apenas para água, etanol e benzeno, caso o PubChem esteja indisponível.
+- Busca por nome em português, espanhol, inglês ou CID PubChem.
+- Modo AR usando a câmera do navegador e rastreamento da mão com MediaPipe Tasks Vision HandLandmarker.
+- Layout responsivo para celular e computador.
 
 ## Arquivos
 
@@ -28,34 +29,28 @@ script.js
 README.md
 ```
 
-## Como testar
+## Como publicar no GitHub Pages
 
-Página normal:
-
-```text
-https://arigony.github.io/hand_molecule/
-```
-
-Página com diagnóstico da mão:
-
-```text
-https://arigony.github.io/hand_molecule/?debug=1
-```
-
-No modo diagnóstico, se a mão for detectada, pontos brancos devem aparecer sobre a mão.
+1. Crie um repositório no GitHub.
+2. Envie os arquivos `index.html`, `style.css`, `script.js` e `README.md` para a raiz do repositório.
+3. Vá em **Settings → Pages**.
+4. Em **Build and deployment**, escolha:
+   - Source: `Deploy from a branch`
+   - Branch: `main`
+   - Folder: `/root`
+5. Aguarde a publicação e acesse a URL do GitHub Pages.
 
 ## Observações técnicas
 
 A página usa:
 
-- Three.js;
-- MediaPipe Tasks Vision;
-- HandLandmarker;
+- Three.js via CDN;
+- MediaPipe Tasks Vision HandLandmarker via CDN;
 - PubChem PUG REST API;
-- JavaScript puro;
+- JavaScript puro, sem build;
 - CSS puro.
 
-O modo câmera exige HTTPS. GitHub Pages já fornece HTTPS automaticamente.
+O modo AR/câmera exige HTTPS ou `localhost`. No GitHub Pages, o HTTPS já é fornecido automaticamente.
 
 ## Exemplos incluídos
 
@@ -68,6 +63,10 @@ O modo câmera exige HTTPS. GitHub Pages já fornece HTTPS automaticamente.
 | Aspirina | 2244 |
 | Dopamina | 681 |
 | Glicose | 5793 |
+| Serotonina | 5202 |
+| Adrenalina | 5816 |
+| Vitamina C | 54670067 |
+| CBD | 644019 |
 
 ## Uso didático sugerido
 
@@ -77,5 +76,77 @@ O professor pode pedir que os estudantes comparem:
 - presença de heteroátomos;
 - grupos funcionais;
 - ligações simples e duplas;
-- diferenças entre moléculas pequenas e maiores;
+- diferenças entre moléculas pequenas e biomoléculas;
 - relação entre estrutura molecular e propriedades químicas.
+
+## Licença
+
+Uso educacional livre, com crédito ao autor/projeto.
+
+
+## Ajustes mobile-first
+
+Esta versão inclui otimizações para celular:
+
+- resolução de câmera reduzida no modo AR;
+- processamento do rastreamento com menor frequência para evitar travamentos;
+- fallback por toque: arraste para girar e faça pinça para zoom quando a mão não for detectada;
+- antialias e pixel ratio ajustados em celulares para melhorar desempenho.
+
+
+## Correção de enquadramento no celular
+
+No modo AR em celular, a posição da molécula é ancorada em uma zona segura da tela.  
+Isso evita que a estrutura saia do campo visual quando a mão se aproxima das bordas da câmera.
+
+No celular:
+- a mão controla rotação e escala;
+- a posição permanece centralizada;
+- o toque continua funcionando como fallback.
+
+
+## Revisão de rastreamento de mão
+
+Esta versão substitui o rastreador antigo `@mediapipe/hands` pela API moderna **MediaPipe Tasks Vision HandLandmarker**, seguindo a abordagem do projeto de referência que funcionou melhor em smartphone.
+
+Principais decisões técnicas:
+
+- `@mediapipe/tasks-vision@0.10.34/vision_bundle.mjs`;
+- modelo `hand_landmarker.task` float16;
+- `delegate: CPU`, mais previsível em celulares;
+- `detectForVideo(video, performance.now())` em intervalo controlado;
+- limiares baixos de detecção/presença/rastreamento (`0.2`), como no projeto de referência;
+- sem rejeição rígida por largura da palma;
+- molécula ancorada no celular para não sair da tela;
+- mão controla rotação e escala; toque continua como fallback.
+
+Para diagnóstico, abra a página com `?debug=1` para visualizar os pontos da mão sobre a câmera.
+
+
+## Revisão técnica testada
+
+Esta revisão usa o vídeo da câmera como elemento DOM visível no modo AR, em vez de usar o vídeo como textura WebGL. Isso aproxima o comportamento da página `mol`, reduz custo de GPU no celular e evita discrepâncias entre o frame visto pelo usuário e o frame processado pelo HandLandmarker. Também inclui cache-busting em `style.css` e `script.js` para reduzir problemas de versões antigas no GitHub Pages.
+
+## Revisão visual e gestual
+
+Esta revisão melhora a visualização no celular:
+
+- resolução de câmera mobile elevada para 640 × 480;
+- `pixelRatio` do WebGL aumentado no celular;
+- antialias ativado para deixar esferas e ligações menos serrilhadas;
+- carbono, oxigênio e nitrogênio com cores mais claras/saturadas;
+- ligações duplas e aromáticas do PubChem exibidas como duplas visíveis;
+- controle de zoom por pinça entre polegar e indicador.
+
+
+## Busca em três idiomas
+
+A busca aceita:
+
+- português: `água`, `etanol`, `benzeno`, `cafeína`, `ácido acético`;
+- espanhol: `agua`, `etanol`, `benceno`, `cafeína`, `glucosa`;
+- inglês: `water`, `ethanol`, `benzene`, `caffeine`, `glucose`;
+- CID PubChem numérico.
+
+Para nomes conhecidos, o app usa uma tabela local de aliases e carrega diretamente o CID PubChem correspondente.  
+Para nomes não cadastrados, tenta buscar no PubChem usando o termo digitado.
