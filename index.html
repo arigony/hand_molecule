@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MolecuAR — Visualizador Molecular Ball-and-Stick</title>
-  <meta name="description" content="Visualizador molecular 3D educacional com estruturas do PubChem, ball-and-stick e rastreamento de mão com MediaPipe Tasks Vision." />
+  <meta name="description" content="Visualizador molecular 3D educacional com estruturas do PubChem, busca multilíngue, ball-and-stick e AR com câmera frontal/traseira." />
 
   <link rel="stylesheet" href="style.css?v=wikidata-1" />
 
@@ -29,7 +29,7 @@
         <div class="brand-mark">M</div>
         <div>
           <h1>Molecu<span>AR</span></h1>
-          <p>PT/ES/EN · Wikidata → PubChem · Ball-and-stick</p>
+          <p>PT/ES/EN · Wikidata → PubChem · AR frontal/traseira</p>
         </div>
       </div>
 
@@ -76,7 +76,7 @@
 
     <section id="helpCard" class="help-card">
       <strong>Como usar</strong>
-      <p>Busque em português, espanhol ou inglês. O app tenta tabela local, Wikidata e PubChem. No AR, mão gira e pinça faz zoom.</p>
+      <p>Busque em português, espanhol ou inglês. No AR, alterne entre câmera frontal e traseira. A câmera frontal é melhor para mão; a traseira mostra o ambiente real atrás da molécula.</p>
     </section>
 
     <div id="loading" class="loading hidden" role="status" aria-live="assertive">
@@ -88,6 +88,7 @@
   </main>
 
   <script src="resolver.js?v=wikidata-1"></script>
+  <script src="camera-toggle.js?v=rear-camera-1"></script>
   <script type="module" src="script.js?v=wikidata-1"></script>
 </body>
 </html>
