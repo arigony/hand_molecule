@@ -1,23 +1,21 @@
 # MolecuAR — Visualizador Molecular WebAR Multilíngue
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21323163.svg)](https://doi.org/10.5281/zenodo.21323163)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21325855.svg)](https://doi.org/10.5281/zenodo.21325855)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub Pages](https://img.shields.io/badge/demo-GitHub%20Pages-blue)](https://arigony.github.io/hand_molecule/)
 
 **MolecuAR** é um objeto educacional interativo para visualização molecular 3D no navegador, com busca multilíngue, integração com PubChem/Wikidata, representação ball-and-stick e modo de realidade aumentada para celular.
 
-## Versões e citação
-
-### Versão atual do código
+## Versão citável atual
 
 - **Versão:** v1.1.0
+- **DOI Zenodo:** https://doi.org/10.5281/zenodo.21325855
+- **Release GitHub:** https://github.com/arigony/hand_molecule/releases/tag/v1.1.0
 - **Estado:** integração do painel químico e do controle de câmera concluída e verificada manualmente em celular
 - **Demonstração online:** https://arigony.github.io/hand_molecule/
 - **Repositório:** https://github.com/arigony/hand_molecule
 
-O release GitHub `v1.1.0` deverá ser criado após esta atualização. Quando o Zenodo arquivar o novo release, o DOI específico da versão v1.1.0 será acrescentado a este README.
-
-### Versão atualmente arquivada no Zenodo
+### Versão anterior
 
 - **Versão:** v1.0.1
 - **DOI Zenodo:** https://doi.org/10.5281/zenodo.21323163
@@ -25,15 +23,9 @@ O release GitHub `v1.1.0` deverá ser criado após esta atualização. Quando o 
 
 ## Citação sugerida
 
-### Para a versão atual v1.1.0, antes da criação do novo DOI
+Souto, A. A. (2026). *MolecuAR: a multilingual WebAR molecular visualization tool for chemical education* (Version 1.1.0) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.21325855
 
-Souto, A. A. (2026). *MolecuAR: a multilingual WebAR molecular visualization tool for chemical education* (Version 1.1.0) [Computer software]. GitHub. https://github.com/arigony/hand_molecule
-
-### Para a versão arquivada v1.0.1
-
-Souto, A. A. (2026). *MolecuAR: a multilingual WebAR molecular visualization tool for chemical education* (Version 1.0.1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.21323163
-
-Um arquivo `CITATION.cff` também está incluído no repositório e foi atualizado para a versão 1.1.0.
+Um arquivo `CITATION.cff` também está incluído no repositório e contém o DOI específico da versão 1.1.0.
 
 ## Novidades da versão 1.1.0
 
@@ -44,7 +36,8 @@ Um arquivo `CITATION.cff` também está incluído no repositório e foi atualiza
 - integração de `camera-toggle.js` antes da inicialização do modo AR;
 - alternância funcional entre câmera frontal e traseira;
 - verificação manual do painel e da troca de câmera em celular;
-- atualização dos metadados de citação para v1.1.0.
+- atualização dos metadados de citação para v1.1.0;
+- arquivamento da versão 1.1.0 no Zenodo.
 
 ## Objetivo educacional
 
@@ -180,13 +173,17 @@ O projeto está publicado via GitHub Pages:
 https://arigony.github.io/hand_molecule/
 ```
 
-A versão v1.0.1 está arquivada no Zenodo:
+A versão atual v1.1.0 está arquivada no Zenodo:
+
+```text
+https://doi.org/10.5281/zenodo.21325855
+```
+
+A versão anterior v1.0.1 permanece disponível em:
 
 ```text
 https://doi.org/10.5281/zenodo.21323163
 ```
-
-A versão v1.1.0 será arquivada depois da criação do novo release GitHub e da sincronização do Zenodo.
 
 ## Limitações
 
@@ -198,10 +195,8 @@ A versão v1.1.0 será arquivada depois da criação do novo release GitHub e da
 
 ## Próximos passos
 
-- Criar o release GitHub **v1.1.0**.
-- Sincronizar o release v1.1.0 com o Zenodo.
-- Atualizar o README e o manuscrito com o DOI específico da nova versão.
-- Repetir e documentar a matriz de verificação técnica.
+- Repetir e documentar a matriz de verificação técnica para a versão 1.1.0.
+- Atualizar o manuscrito do ChemRxiv com o DOI e os resultados da versão 1.1.0.
 - Implementar modo **Mundo AR** com WebXR hit-test.
 - Permitir ancoragem da molécula em uma superfície real.
 - Criar atividades guiadas para sala de aula.
