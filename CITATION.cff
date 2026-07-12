@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use MolecuAR in teaching or research, please cite this software."
+title: "MolecuAR: a multilingual WebAR molecular visualization tool for chemical education"
+version: "1.0.0"
+date-released: "2026-07-12"
+authors:
+  - family-names: "Souto"
+    given-names: "André Arigony"
+repository-code: "https://github.com/arigony/hand_molecule"
+url: "https://arigony.github.io/hand_molecule/"
+license: "MIT"
+keywords:
+  - chemical education
+  - molecular visualization
+  - augmented reality
+  - WebAR
+  - PubChem
+  - Wikidata
+  - Three.js
+  - MediaPipe
