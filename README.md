@@ -1,195 +1,185 @@
-# MolecuAR — Visualizador Molecular Ball-and-Stick
+# MolecuAR — Visualizador Molecular WebAR Multilíngue
 
-Objeto educacional interativo para visualização molecular 3D no navegador.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21323163.svg)](https://doi.org/10.5281/zenodo.21323163)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub Pages](https://img.shields.io/badge/demo-GitHub%20Pages-blue)](https://arigony.github.io/hand_molecule/)
 
-## Versão final
+**MolecuAR** é um objeto educacional interativo para visualização molecular 3D no navegador, com busca multilíngue, integração com PubChem/Wikidata, representação ball-and-stick e modo de realidade aumentada para celular.
 
-Esta versão foi organizada para publicação direta no GitHub Pages e padroniza todas as estruturas em **representação ball-and-stick**.
+## Versão citável
 
-## Características
+- **Versão:** v1.0.1
+- **DOI Zenodo:** https://doi.org/10.5281/zenodo.21323163
+- **Release GitHub:** https://github.com/arigony/hand_molecule/releases/tag/v1.0.1
+- **Demonstração online:** https://arigony.github.io/hand_molecule/
 
-- Estruturas carregadas prioritariamente do **PubChem** por CID.
-- Exemplos com CIDs fixos para evitar ambiguidade de busca.
-- Representação visual única para todas as moléculas:
-  - átomos como esferas;
-  - ligações como bastões;
-  - ligações simples, duplas e triplas diferenciadas;
-  - cores atômicas padronizadas.
-- Fallback local apenas para água, etanol e benzeno, caso o PubChem esteja indisponível.
-- Busca por nome em inglês ou CID PubChem.
-- Modo AR usando a câmera do navegador e rastreamento da mão com MediaPipe Hands.
-- Layout responsivo para celular e computador.
+## Citação sugerida
 
-## Arquivos
+Souto, A. A. (2026). *MolecuAR: a multilingual WebAR molecular visualization tool for chemical education* (Version 1.0.1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.21323163
+
+Um arquivo `CITATION.cff` também está incluído no repositório.
+
+## Objetivo educacional
+
+O MolecuAR foi desenvolvido para apoiar o ensino de Química, permitindo que estudantes relacionem:
+
+- fórmula molecular;
+- geometria e visualização 3D;
+- ligações simples, duplas e triplas;
+- heteroátomos e grupos funcionais;
+- propriedades físico-químicas;
+- solubilidade, LogP, massa molar e informações de segurança;
+- relação entre estrutura molecular e propriedades químicas.
+
+## Principais funcionalidades
+
+- Visualização molecular 3D em representação **ball-and-stick**.
+- Busca de estruturas moleculares a partir do **PubChem CID**.
+- Busca por nomes em **português, espanhol e inglês**.
+- Resolução multilíngue por **Wikidata → PubChem CID**.
+- Integração com **PubChem PUG REST** e **PubChem PUG-View**.
+- Interface responsiva para celular e computador.
+- Modo AR com câmera do navegador.
+- Alternância entre câmera frontal e traseira no celular.
+- Rastreamento de mão com **MediaPipe Tasks Vision / HandLandmarker**.
+- Controle por gesto de pinça para zoom molecular.
+- Painel expansível com informações químicas.
+- Normalização de temperaturas para **°C** quando possível.
+
+## Informações exibidas no painel químico
+
+O painel inferior pode ser expandido para mostrar informações recuperadas do PubChem:
+
+- fórmula molecular;
+- massa molar;
+- SMILES;
+- nome IUPAC;
+- LogP / XLogP;
+- TPSA;
+- doadores e aceptores de ligação de hidrogênio;
+- ligações rotacionais;
+- carga;
+- complexidade;
+- massa exata;
+- solubilidade;
+- ponto de fusão;
+- ponto de ebulição;
+- densidade;
+- uso/contexto;
+- perigos e informações de segurança.
+
+Nem todos os compostos possuem todos os campos preenchidos no PubChem. Quando um dado não está disponível, o painel mostra **não informado**.
+
+## Como usar
+
+1. Acesse: https://arigony.github.io/hand_molecule/
+2. Digite um nome molecular em português, espanhol ou inglês.
+3. Alternativamente, digite diretamente o **CID PubChem**.
+4. Use o mouse/toque para girar e aproximar a molécula.
+5. Toque no cartão inferior para abrir o painel de informações químicas.
+6. No celular, clique em **AR** para usar a câmera.
+7. No modo AR, use o botão de câmera para alternar entre câmera frontal e traseira.
+
+Exemplos de busca:
 
 ```text
-index.html
-style.css
-script.js
-README.md
+água / agua / water
+etanol / ethanol
+benzeno / benceno / benzene
+cafeína / caffeine
+aspirina / aspirin
+glicose / glucosa / glucose
+ácido acético / acetic acid
+curcumina / curcumin
+resveratrol
 ```
 
-## Como publicar no GitHub Pages
+Também é possível buscar por CID:
 
-1. Crie um repositório no GitHub.
-2. Envie os arquivos `index.html`, `style.css`, `script.js` e `README.md` para a raiz do repositório.
-3. Vá em **Settings → Pages**.
-4. Em **Build and deployment**, escolha:
-   - Source: `Deploy from a branch`
-   - Branch: `main`
-   - Folder: `/root`
-5. Aguarde a publicação e acesse a URL do GitHub Pages.
+```text
+2244   # aspirina
+2519   # cafeína
+5793   # glicose
+```
 
-## Observações técnicas
+## Arquitetura de busca molecular
 
-A página usa:
+A busca usa uma estratégia híbrida:
 
-- Three.js via CDN;
-- MediaPipe Hands via CDN;
-- PubChem PUG REST API;
-- JavaScript puro, sem build;
-- CSS puro.
+```text
+1. CID numérico digitado pelo usuário
+2. Tabela local de aliases PT/ES/EN para moléculas didáticas
+3. Busca direta no PubChem
+4. Busca multilíngue no Wikidata
+5. Recuperação do PubChem CID via propriedade P662 no Wikidata
+6. Carregamento da estrutura molecular pelo PubChem
+```
 
-O modo AR/câmera exige HTTPS ou `localhost`. No GitHub Pages, o HTTPS já é fornecido automaticamente.
+Essa arquitetura evita depender exclusivamente de tradução automática e melhora a identificação de nomes comuns em diferentes idiomas.
 
-## Exemplos incluídos
+## Tecnologias utilizadas
 
-| Molécula | CID PubChem |
-|---|---:|
-| Água | 962 |
-| Etanol | 702 |
-| Benzeno | 241 |
-| Cafeína | 2519 |
-| Aspirina | 2244 |
-| Dopamina | 681 |
-| Glicose | 5793 |
-| Serotonina | 5202 |
-| Adrenalina | 5816 |
-| Vitamina C | 54670067 |
-| CBD | 644019 |
+- HTML5
+- CSS3
+- JavaScript puro
+- Three.js
+- PubChem PUG REST
+- PubChem PUG-View
+- Wikidata API
+- MediaPipe Tasks Vision / HandLandmarker
+- GitHub Pages
+- Zenodo
 
-## Uso didático sugerido
+## Estrutura dos arquivos
 
-O professor pode pedir que os estudantes comparem:
+```text
+index.html              interface principal
+style.css               estilos gerais e responsividade
+script.js               visualização 3D, PubChem e AR
+resolver.js             resolução multilíngue Wikidata → PubChem CID
+camera-toggle.js        alternância de câmera frontal/traseira
+molecule-info.css       estilos do painel de informações químicas
+molecule-info.js        painel expandido de propriedades químicas
+README.md               documentação do projeto
+LICENSE                 licença MIT
+CITATION.cff            metadados de citação
+```
 
-- geometria molecular;
-- presença de heteroátomos;
-- grupos funcionais;
-- ligações simples e duplas;
-- diferenças entre moléculas pequenas e biomoléculas;
-- relação entre estrutura molecular e propriedades químicas.
+## Publicação
+
+O projeto está publicado via GitHub Pages:
+
+```text
+https://arigony.github.io/hand_molecule/
+```
+
+O software foi arquivado no Zenodo:
+
+```text
+https://doi.org/10.5281/zenodo.21323163
+```
+
+## Limitações
+
+- A disponibilidade de estruturas, propriedades, solubilidade, perigos e usos depende dos dados existentes no PubChem.
+- A busca multilíngue depende da presença de identificadores PubChem CID no Wikidata.
+- Alguns nomes podem ser ambíguos, especialmente sais, isômeros, hidratos, misturas e nomes comerciais.
+- O modo AR atual sobrepõe a molécula à câmera; a ancoragem espacial em mesa/chão exigirá uma etapa futura com WebXR hit-test.
+- O desempenho do rastreamento de mão pode variar conforme navegador, câmera, iluminação e modelo do celular.
+
+## Próximos passos
+
+- Implementar modo **Mundo AR** com WebXR hit-test.
+- Permitir ancoragem da molécula em uma superfície real.
+- Adicionar mais moléculas didáticas à tabela local.
+- Criar atividades guiadas para sala de aula.
+- Validar o objeto educacional com estudantes.
+- Preparar preprint/artigo como software educacional ou technology report.
 
 ## Licença
 
-Uso educacional livre, com crédito ao autor/projeto.
+Este projeto está licenciado sob a **MIT License**.
 
+## Autor
 
-## Ajustes mobile-first
-
-Esta versão inclui otimizações para celular:
-
-- resolução de câmera reduzida no modo AR;
-- `modelComplexity: 0` no MediaPipe Hands em dispositivos móveis;
-- processamento do rastreamento com menor frequência para evitar travamentos;
-- fallback por toque: arraste para girar e faça pinça para zoom quando a mão não for detectada;
-- antialias e pixel ratio reduzidos em celulares para melhorar desempenho.
-
-
-## Correção de enquadramento no celular
-
-No modo AR em celular, a posição da molécula é ancorada em uma zona segura da tela.  
-Isso evita que a estrutura saia do campo visual quando a mão se aproxima das bordas da câmera.
-
-No celular:
-- a mão controla rotação e escala;
-- a posição permanece centralizada;
-- o toque continua funcionando como fallback.
-
-
-## Validação mais rigorosa da mão
-
-Esta revisão corrige falsos positivos em celular.  
-O sistema só aceita a mão quando há:
-
-- confiança suficiente do MediaPipe Hands;
-- palma e dedos em proporções plausíveis;
-- mão suficientemente visível no quadro;
-- pelo menos alguns frames estáveis.
-
-Isso evita que rosto, óculos, orelha ou partes do ambiente sejam interpretados como mão.
-
-
-## Versão robusta de detecção mobile
-
-Nesta revisão, a validação da mão foi ajustada para celular:
-
-- não rejeita mais a mão real por largura de palma muito grande ou pequena;
-- usa limiares amplos e histerese temporal;
-- aceita mão parcialmente enquadrada;
-- mantém a molécula ancorada para evitar saída da tela;
-- usa a geometria da mão apenas para rotação e escala.
-
-
-## Revisão de rastreamento de mão
-
-Esta versão substitui o rastreador antigo `@mediapipe/hands` pela API moderna **MediaPipe Tasks Vision HandLandmarker**, seguindo a abordagem do projeto de referência que funcionou melhor em smartphone.
-
-Principais decisões técnicas:
-
-- `@mediapipe/tasks-vision@0.10.34/vision_bundle.mjs`;
-- modelo `hand_landmarker.task` float16;
-- `delegate: CPU`, mais previsível em celulares;
-- câmera frontal em baixa resolução no mobile (`320 × 240`) para maior estabilidade;
-- `detectForVideo(video, performance.now())` em intervalo controlado;
-- limiares baixos de detecção/presença/rastreamento (`0.2`), como no projeto de referência;
-- sem rejeição rígida por largura da palma;
-- molécula ancorada no celular para não sair da tela;
-- mão controla rotação e escala; toque continua como fallback.
-
-Para diagnóstico, abra a página com `?debug=1` para visualizar os pontos da mão sobre a câmera.
-
-
-## Revisão técnica testada
-
-Esta revisão usa o vídeo da câmera como elemento DOM visível no modo AR, em vez de usar o vídeo como textura WebGL. Isso aproxima o comportamento da página `mol`, reduz custo de GPU no celular e evita discrepâncias entre o frame visto pelo usuário e o frame processado pelo HandLandmarker. Também inclui cache-busting em `style.css` e `script.js` para reduzir problemas de versões antigas no GitHub Pages.
-
-## Revisão visual e gestual
-
-Esta revisão melhora a visualização no celular:
-
-- resolução de câmera mobile elevada para 640 × 480;
-- `pixelRatio` do WebGL aumentado no celular;
-- antialias ativado para deixar esferas e ligações menos serrilhadas;
-- carbono, oxigênio e nitrogênio com cores mais claras/saturadas;
-- ligações duplas e aromáticas do PubChem exibidas como duplas visíveis;
-- controle de zoom por pinça entre polegar e indicador.
-
-
-## Resolvedor multilíngue Wikidata → PubChem
-
-A busca usa uma camada híbrida em `resolver.js`:
-
-```text
-1. Tabela local PT/ES/EN para moléculas didáticas
-2. Busca direta no PubChem
-3. Wikidata em português, espanhol e inglês
-4. PubChem CID encontrado no Wikidata
-```
-
-O arquivo `resolver.js` intercepta apenas a chamada de nome → CID do PubChem.  
-Quando o estudante digita um nome em português ou espanhol que o PubChem não reconhece diretamente, o app consulta o Wikidata. Se o item do Wikidata tiver a propriedade **PubChem CID (P662)**, a estrutura é carregada normalmente pelo PubChem.
-
-Exemplos esperados:
-
-```text
-ácido acético → CID 176
-glucosa → CID PubChem correspondente
-benzaldehído → benzaldehyde/CID PubChem
-curcumina → CID 969516
-```
-
-Limitações:
-
-- Wikidata pode não ter PubChem CID para todos os compostos.
-- Alguns nomes podem ser ambíguos.
-- Para nomes muito específicos, o CID PubChem ou o nome IUPAC em inglês continuam sendo mais robustos.
+Prof. Dr. André Arigony Souto
