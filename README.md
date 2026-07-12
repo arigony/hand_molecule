@@ -6,18 +6,45 @@
 
 **MolecuAR** é um objeto educacional interativo para visualização molecular 3D no navegador, com busca multilíngue, integração com PubChem/Wikidata, representação ball-and-stick e modo de realidade aumentada para celular.
 
-## Versão citável
+## Versões e citação
+
+### Versão atual do código
+
+- **Versão:** v1.1.0
+- **Estado:** integração do painel químico e do controle de câmera concluída e verificada manualmente em celular
+- **Demonstração online:** https://arigony.github.io/hand_molecule/
+- **Repositório:** https://github.com/arigony/hand_molecule
+
+O release GitHub `v1.1.0` deverá ser criado após esta atualização. Quando o Zenodo arquivar o novo release, o DOI específico da versão v1.1.0 será acrescentado a este README.
+
+### Versão atualmente arquivada no Zenodo
 
 - **Versão:** v1.0.1
 - **DOI Zenodo:** https://doi.org/10.5281/zenodo.21323163
 - **Release GitHub:** https://github.com/arigony/hand_molecule/releases/tag/v1.0.1
-- **Demonstração online:** https://arigony.github.io/hand_molecule/
 
 ## Citação sugerida
 
+### Para a versão atual v1.1.0, antes da criação do novo DOI
+
+Souto, A. A. (2026). *MolecuAR: a multilingual WebAR molecular visualization tool for chemical education* (Version 1.1.0) [Computer software]. GitHub. https://github.com/arigony/hand_molecule
+
+### Para a versão arquivada v1.0.1
+
 Souto, A. A. (2026). *MolecuAR: a multilingual WebAR molecular visualization tool for chemical education* (Version 1.0.1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.21323163
 
-Um arquivo `CITATION.cff` também está incluído no repositório.
+Um arquivo `CITATION.cff` também está incluído no repositório e foi atualizado para a versão 1.1.0.
+
+## Novidades da versão 1.1.0
+
+- integração efetiva de `molecule-info.css` e `molecule-info.js` ao `index.html`;
+- painel inferior expansível com propriedades recuperadas do PubChem;
+- exibição de SMILES, massa molar, XLogP, TPSA, solubilidade, propriedades físicas, usos e perigos quando disponíveis;
+- conversão de temperaturas para °C quando possível;
+- integração de `camera-toggle.js` antes da inicialização do modo AR;
+- alternância funcional entre câmera frontal e traseira;
+- verificação manual do painel e da troca de câmera em celular;
+- atualização dos metadados de citação para v1.1.0.
 
 ## Objetivo educacional
 
@@ -122,11 +149,11 @@ Essa arquitetura evita depender exclusivamente de tradução automática e melho
 - HTML5
 - CSS3
 - JavaScript puro
-- Three.js
+- Three.js 0.160.0
 - PubChem PUG REST
 - PubChem PUG-View
 - Wikidata API
-- MediaPipe Tasks Vision / HandLandmarker
+- MediaPipe Tasks Vision / HandLandmarker 0.10.34
 - GitHub Pages
 - Zenodo
 
@@ -153,11 +180,13 @@ O projeto está publicado via GitHub Pages:
 https://arigony.github.io/hand_molecule/
 ```
 
-O software foi arquivado no Zenodo:
+A versão v1.0.1 está arquivada no Zenodo:
 
 ```text
 https://doi.org/10.5281/zenodo.21323163
 ```
+
+A versão v1.1.0 será arquivada depois da criação do novo release GitHub e da sincronização do Zenodo.
 
 ## Limitações
 
@@ -169,12 +198,14 @@ https://doi.org/10.5281/zenodo.21323163
 
 ## Próximos passos
 
+- Criar o release GitHub **v1.1.0**.
+- Sincronizar o release v1.1.0 com o Zenodo.
+- Atualizar o README e o manuscrito com o DOI específico da nova versão.
+- Repetir e documentar a matriz de verificação técnica.
 - Implementar modo **Mundo AR** com WebXR hit-test.
 - Permitir ancoragem da molécula em uma superfície real.
-- Adicionar mais moléculas didáticas à tabela local.
 - Criar atividades guiadas para sala de aula.
 - Validar o objeto educacional com estudantes.
-- Preparar preprint/artigo como software educacional ou technology report.
 
 ## Licença
 
