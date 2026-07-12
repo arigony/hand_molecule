@@ -161,8 +161,105 @@
     }
   }
 
+  function fmtC(value) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return "";
+    return n.toFixed(1).replace(/\.0$/, "");
+  }
+
+  function fToC(value) {
+    return (Number(value) - 32) * 5 / 9;
+  }
+
+  function kToC(value) {
+    return Number(value) - 273.15;
+  }
+
+  function convertRange(text, regex, converter) {
+    return text.replace(regex, (match, a, b) => {
+      if (b !== undefined) {
+        const c1 = converter(a);
+        const c2 = converter(b);
+        return Number.isFinite(c1) && Number.isFinite(c2) ? `${fmtC(c1)}–${fmtC(c2)} °C` : match;
+      }
+      const c = converter(a);
+      return Number.isFinite(c) ? `${fmtC(c)} °C` : match;
+    });
+  }
+
+  function normalizeTemperaturesInText(text) {
+    if (typeof text !== "string" || !text.trim()) return text;
+    let out = text
+      .replace(/degrees?\s*Celsius/gi, "°C")
+      .replace(/degrees?\s*C\b/gi, "°C")
+      .replace(/deg\s*C\b/gi, "°C");
+
+    out = convertRange(out, /(-?\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(-?\d+(?:\.\d+)?)\s*°?\s*F\b/gi, fToC);
+    out = convertRange(out, /(-?\d+(?:\.\d+)?)\s*°?\s*F\b/gi, fToC);
+    out = convertRange(out, /(-?\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(-?\d+(?:\.\d+)?)\s*K\b/g, kToC);
+    out = convertRange(out, /(-?\d+(?:\.\d+)?)\s*K\b/g, kToC);
+    return out;
+  }
+
+  function normalizePugViewTemperatures(value) {
+    if (!value || typeof value !== "object") return value;
+    if (Array.isArray(value)) {
+      value.forEach(normalizePugViewTemperatures);
+      return value;
+    }
+    if (typeof value.String === "string") {
+      value.String = normalizeTemperaturesInText(value.String);
+    }
+    for (const key of Object.keys(value)) normalizePugViewTemperatures(value[key]);
+    return value;
+  }
+
+  function isPugViewDataUrl(urlText) {
+    try {
+      const url = new URL(urlText);
+      return url.hostname.includes("pubchem.ncbi.nlm.nih.gov") &&
+        /\/rest\/pug_view\/data\/compound\/\d+\/JSON/i.test(url.pathname);
+    } catch {
+      return false;
+    }
+  }
+
+  async function normalizedPugViewResponse(input, init) {
+    const response = await originalFetch(input, init);
+    if (!response.ok) return response;
+    try {
+      const data = await response.clone().json();
+      normalizePugViewTemperatures(data);
+      return new Response(JSON.stringify(data), {
+        status: response.status,
+        statusText: response.statusText,
+        headers: { "Content-Type": "application/json" }
+      });
+    } catch (error) {
+      console.warn("[MolecuAR resolver] Não foi possível normalizar temperaturas PUG-View:", error);
+      return response;
+    }
+  }
+
+  function patchSolubilityLabel(root = document) {
+    for (const el of root.querySelectorAll(".info-item span")) {
+      if (el.textContent.trim().toLowerCase() === "solubilidade") {
+        el.textContent = "Solubilidade (°C quando informado)";
+      }
+    }
+  }
+
+  const labelObserver = new MutationObserver(() => patchSolubilityLabel());
+  document.addEventListener("DOMContentLoaded", () => {
+    patchSolubilityLabel();
+    labelObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+  });
+
   window.fetch = async function patchedFetch(input, init) {
     const urlText = typeof input === "string" ? input : input?.url;
+
+    if (isPugViewDataUrl(urlText || "")) return normalizedPugViewResponse(input, init);
+
     const pubchemName = extractPubChemName(urlText || "");
 
     if (!pubchemName) return originalFetch(input, init);
