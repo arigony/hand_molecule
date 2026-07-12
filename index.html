@@ -4,10 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MolecuAR — Visualizador Molecular Ball-and-Stick</title>
-  <meta name="description" content="Visualizador molecular 3D educacional com estruturas do PubChem, busca multilíngue, propriedades químicas, ball-and-stick e AR com câmera frontal/traseira." />
+  <meta name="description" content="Visualizador molecular 3D educacional com estruturas do PubChem, ball-and-stick e rastreamento de mão com MediaPipe Tasks Vision." />
 
-  <link rel="stylesheet" href="style.css?v=wikidata-1" />
-  <link rel="stylesheet" href="molecule-info.css?v=info-panel-1" />
+  <link rel="stylesheet" href="style.css?v=solubility-celsius-2" />
 
   <script type="importmap">
   {
@@ -30,13 +29,14 @@
         <div class="brand-mark">M</div>
         <div>
           <h1>Molecu<span>AR</span></h1>
-          <p>PT/ES/EN · Wikidata → PubChem · propriedades químicas</p>
+          <p>PT/ES/EN · Wikidata → PubChem · Ball-and-stick</p>
         </div>
       </div>
 
       <div class="view-buttons" aria-label="Modos de visualização">
         <button id="galleryMode" class="mode-button active" type="button">Galeria</button>
         <button id="arMode" class="mode-button" type="button">AR</button>
+        <button id="cameraFlip" class="mode-button camera-button" type="button" title="Alternar câmera frontal/traseira">Câmera: frontal</button>
       </div>
     </header>
 
@@ -64,12 +64,23 @@
       </div>
     </aside>
 
-    <section class="info-card" aria-live="polite">
-      <div class="info-icon">⚛</div>
-      <div class="info-text">
-        <h2 id="moleculeName">Carregando...</h2>
-        <p id="moleculeFormula">—</p>
-        <small id="moleculeMeta">Fonte principal: PubChem</small>
+    <section id="infoCard" class="info-card collapsed" aria-live="polite">
+      <button id="infoToggle" class="info-toggle" type="button" aria-expanded="false">
+        <div class="info-icon">⚛</div>
+        <div class="info-text">
+          <h2 id="moleculeName">Carregando...</h2>
+          <p id="moleculeFormula">—</p>
+          <small id="moleculeMeta">Fonte principal: PubChem</small>
+        </div>
+        <div class="info-chevron" aria-hidden="true">⌃</div>
+      </button>
+
+      <div id="moleculeInfoBody" class="info-body">
+        <div class="info-section-title">Informações químicas</div>
+        <div id="moleculeInfoGrid" class="info-grid">
+          <div class="info-item"><span>Carregando</span><strong>—</strong></div>
+        </div>
+        <small id="infoSource" class="info-source">Fonte: PubChem</small>
       </div>
     </section>
 
@@ -77,7 +88,7 @@
 
     <section id="helpCard" class="help-card">
       <strong>Como usar</strong>
-      <p>Toque no cartão inferior para subir/baixar informações: massa molar, logP, solubilidade, propriedades físicas, uso e perigos.</p>
+      <p>Toque no cartão inferior para subir/baixar informações: massa molar, logP, solubilidade, propriedades, uso e perigos.</p>
     </section>
 
     <div id="loading" class="loading hidden" role="status" aria-live="assertive">
@@ -88,9 +99,7 @@
     <div id="toastBox" class="toast-box" aria-live="polite"></div>
   </main>
 
-  <script src="resolver.js?v=wikidata-1"></script>
-  <script src="camera-toggle.js?v=rear-camera-1"></script>
-  <script src="molecule-info.js?v=smiles-celsius-1"></script>
-  <script type="module" src="script.js?v=wikidata-1"></script>
+  <script src="resolver.js?v=solubility-celsius-2"></script>
+  <script type="module" src="script.js?v=solubility-celsius-2"></script>
 </body>
 </html>
