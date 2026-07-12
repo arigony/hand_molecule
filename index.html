@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MolecuAR — Visualizador Molecular Ball-and-Stick</title>
-  <meta name="description" content="Visualizador molecular 3D educacional com busca em português, espanhol e inglês, PubChem, ball-and-stick e rastreamento de mão." />
+  <meta name="description" content="Visualizador molecular 3D educacional com estruturas do PubChem, ball-and-stick e rastreamento de mão com MediaPipe Tasks Vision." />
 
-  <link rel="stylesheet" href="style.css?v=multilang-1" />
+  <link rel="stylesheet" href="style.css?v=wikidata-1" />
 
   <script type="importmap">
   {
@@ -29,7 +29,7 @@
         <div class="brand-mark">M</div>
         <div>
           <h1>Molecu<span>AR</span></h1>
-          <p>PubChem 3D · Ball-and-stick padronizado</p>
+          <p>PT/ES/EN · Wikidata → PubChem · Ball-and-stick</p>
         </div>
       </div>
 
@@ -43,7 +43,7 @@
       <form id="searchForm">
         <label class="sr-only" for="queryInput">Buscar molécula</label>
         <input id="queryInput" type="search" autocomplete="off" spellcheck="false"
-          placeholder="Português, español, English ou CID. Ex.: cafeína, aspirina, ethanol, 2244" />
+          placeholder="Português, español, English ou CID. Ex.: ácido acético, glucosa, aspirin, 2244" />
         <button id="searchButton" type="submit">Buscar</button>
       </form>
 
@@ -76,7 +76,7 @@
 
     <section id="helpCard" class="help-card">
       <strong>Como usar</strong>
-      <p>Arraste para girar, use a roda do mouse ou pinça para zoom. No modo AR, a molécula aparece sobre a câmera.</p>
+      <p>Busque em português, espanhol ou inglês. O app tenta tabela local, Wikidata e PubChem. No AR, mão gira e pinça faz zoom.</p>
     </section>
 
     <div id="loading" class="loading hidden" role="status" aria-live="assertive">
@@ -87,6 +87,7 @@
     <div id="toastBox" class="toast-box" aria-live="polite"></div>
   </main>
 
-  <script type="module" src="script.js?v=multilang-1"></script>
+  <script src="resolver.js?v=wikidata-1"></script>
+  <script type="module" src="script.js?v=wikidata-1"></script>
 </body>
 </html>
