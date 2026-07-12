@@ -4,11 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MolecuAR — Visualizador Molecular Ball-and-Stick</title>
-  <meta name="description" content="Visualizador molecular 3D educacional com estruturas do PubChem, representação ball-and-stick, busca por moléculas e modo AR simples." />
+  <meta name="description" content="Visualizador molecular 3D educacional com estruturas do PubChem, ball-and-stick e rastreamento de mão com MediaPipe Tasks Vision." />
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=tasks-hand-20260709b" />
 
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
   <script type="importmap">
   {
     "imports": {
@@ -22,7 +21,8 @@
 <body>
   <main id="app" aria-label="MolecuAR visualizador molecular 3D">
     <canvas id="scene" aria-label="Cena molecular 3D"></canvas>
-    <video id="cameraVideo" playsinline muted></video>
+    <canvas id="handOverlay" aria-hidden="true"></canvas>
+    <video id="cameraVideo" playsinline webkit-playsinline muted autoplay></video>
 
     <header class="topbar">
       <div class="brand">
@@ -87,6 +87,6 @@
     <div id="toastBox" class="toast-box" aria-live="polite"></div>
   </main>
 
-  <script type="module" src="script.js"></script>
+  <script type="module" src="script.js?v=tasks-hand-20260709b"></script>
 </body>
 </html>
